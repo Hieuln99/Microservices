@@ -1,0 +1,66 @@
+version: '1.0'
+
+services:
+  redis:
+    image: redis:7.0-alpine
+    container_name: Redis
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', '--raw', 'incr', 'ping']
+      interval: 5s
+      timeout: 30s
+      retries: 3
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: RabbitMQ
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 30s
+      retries: 3
+
+  weather:
+    image: weatherforecast:latest
+    container_name: Weather
+    ports:
+      - '3000:80'
+
+  apigateway:
+    image: ocelotapigateway:latest
+    container_name: APIGateway
+    ports:
+      - '5000:8080'
+
+  weather.api:
+    image: weatherforecastapi:latest
+    container_name: WeatherAPI
+    restart: on-failure
+    ports:
+      - '5001:8080'
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    links:
+      - rabbitmq
+
+  data:
+    image: data:latest
+    container_name: Data
+    restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    links:
+      - rabbitmq
+
+  worker:
+    image: worker:latest
+    container_name: Worker
+    depends_on:
+      redis:
+        condition: service_healthy
