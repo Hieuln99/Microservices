@@ -24,7 +24,7 @@ namespace Data.Service
 		public async Task GetCurrentWeatherData()
 		{
 			_model.QueueDeclare(currentWeatherQueue, exclusive: false);
-			var consumer = new tingBasicConsumer(_model);
+			var consumer = new AsyncEventingBasicConsumer(_model);
 
 			consumer.Received += async (model, ea) =>
 			{
