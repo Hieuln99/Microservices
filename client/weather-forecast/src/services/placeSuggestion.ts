@@ -218,7 +218,7 @@ export const fetchCities = async (search: string) => {
     },
     {
       Id: 29,
-      Name: 'QuangBinh',
+      Name: 'Quang Binh',
       Lat: '17.4833',
       Lon: '106.6',
       Seq: '10',

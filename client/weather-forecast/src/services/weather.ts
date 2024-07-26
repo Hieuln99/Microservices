@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:5000';
+const baseUrl = 'http://20.68.160.240:5000';
 
 export const fetchWeatherData = async (
   city: string | { province: string; lat: number; lon: number }
